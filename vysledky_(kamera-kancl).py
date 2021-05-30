@@ -14,6 +14,8 @@ from pathlib import Path
 import xml.etree.ElementTree as etree
 import csv
 
+GENERATE_CSV = False
+
 
 def try_parse_int(s):
     try:
@@ -102,23 +104,31 @@ def process_heatresult(f):
             for competitor in results:
                 writer.writerow(process_competitor(competitor))
 
-        filename = f.parent / (heat_number + ".csv")
-        with open(filename, "w", newline="") as out_file:
-            writer = csv.writer(out_file, delimiter=";")
-            writer.writerow(["Track", "BestResult"])
-            for competitor in results:
-                writer.writerow(process_competitor_csv(competitor))
-        print(f"#{heat_number} úspěšně zpracováno ({heat_result.attrib['Name']})")
+        if GENERATE_CSV:
+            filename = f.parent / (heat_number + ".csv")
+            with open(filename, "w", newline="") as out_file:
+                writer = csv.writer(out_file, delimiter=";")
+                writer.writerow(["Track", "BestResult"])
+                for competitor in results:
+                    writer.writerow(process_competitor_csv(competitor))
+
         if "Wind" in heat_result.attrib:
-            print(f"  vítr: {heat_result.attrib['Wind']} m/s")
+            wind = float(heat_result.attrib['Wind'])
+            # print(f"  vítr: {wind} m/s")
+            filename = f.parent / (heat_number + ".sav")
+            with open(filename, "w", newline="") as out_file:
+                print(f"[RaceInfo]\nWind={wind:+.1f} m/s\n", file=out_file)
+
+        print(f"#{heat_number} úspěšně zpracováno ({heat_result.attrib['Name']})")
+
     except Exception as e:
-        print(f"CHYBA: #{heat_number} ({heat_result.attrib['Name']})")
+        print(f"CHYBA: {f.stem} ({heat_result.attrib['Name']})")
         print(" ", e)
 
 
 path = Path(".")
 if len(sys.argv) == 2:
-    path = Path("./" + sys.argv[1])
+    path = Path("./" + sys.argv[1])  # used mainly for debug purposes
 
 files = path.glob("*.heatresultxml")
 files = sorted(files, key=lambda x: try_parse_int(x.stem))
