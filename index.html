@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="cs">
     <!-- The cake is a lie! -->
     <head>
         <meta charset="utf-8">
@@ -31,5 +31,9 @@
         
         <h3>Výsledky</h3>
         <p>V programu OPTIc3NET exportujte výsledky běhu (Export the result list <img src="alge_export.png"> v okně Heat list) do složky atletické kanceláře. Spusťte <b>vysledky_(kamera-kancl).py</b>. Ten převede soubory <b>[číslo].heatresultxml</b> na <b>[číslo].txt</b>, které umí importovat AK2.</p>
+        <h4>CSV</h4>
+        <p>Program umí výsledky exportovat také do CSV souboru (který lze ručně importovat do AK2). Tuto variantu můžete zkusit použít v případě problémů s výchozím způsobem převodu. Pro její zapnutí v souboru <b>vysledky_(kamera-kancl).py</b> nahraďte řádek <code>GENERATE_CSV = False</code> řádkem <code>GENERATE_CSV = True</code>.</p>
+        <h4>Vítr</h4>
+        <p>V aktuální verzi už by měl fungovat také import rychlosti větru. Kromě souboru <b>[číslo].txt</b> se generuje také soubor <b>[číslo].sav</b>, ze které umí AK2 importovat rychlost větru. Pro běhy do 200m, u kterých chybí rychlost větru, se zobrazuje varování; to lze vypnout v souboru <b>vysledky_(kamera-kancl).py</b> nahrazením řádku <code>WIND_WARNING = True</code> řádkem <code>WIND_WARNING = False</code>.</p>
     </body>
 </html>

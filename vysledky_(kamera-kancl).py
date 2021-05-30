@@ -15,7 +15,7 @@ import xml.etree.ElementTree as etree
 import csv
 
 GENERATE_CSV = False
-WIND = True
+WIND_WARNING = True
 
 
 def try_parse_int(s):
@@ -133,7 +133,7 @@ def process_heatresult(f):
             filename = f.parent / (heat_number + ".sav")
             with open(filename, "w", newline="") as out_file:
                 print(f"[RaceInfo]\nWind={wind:+.1f} m/s\n", file=out_file)
-        else:
+        elif WIND_WARNING:
             distance = int(heat_result.attrib.get("DistanceMeters", '0'))
             if distance <= 200:
                 print(f"VAROVÁNÍ: chybí měření větru pro #{heat_number} ({heat_result.attrib['Name']})")
