@@ -24,11 +24,25 @@ def try_parse_int(s):
         return 999999
 
 
-def process_competitor(competitor):
+def attempt_to_find_missing_lane(competitor, f):
+    filename = "p" + f.stem + ".txt"
+    with open(f.parent / filename) as p_file:
+        reader = csv.reader(p_file, delimiter='\t', dialect=csv.excel)
+        for row in reader:
+            if row[3] == competitor["Firstname"] and row[4] == competitor["Lastname"]:
+                return row[2]
+    return None
+
+
+def process_competitor(competitor, f):
     c = competitor.attrib
 
     if "Lane" not in c and "Bib" not in c:
-        raise Exception("V souboru není určena dráha ani Bib závodníka/závodníků.")
+        lane = attempt_to_find_missing_lane(c, f)
+        if lane is not None:
+            c["Lane"] = lane
+        else:
+            raise Exception(f"V souboru není určena dráha ani Bib závodníka/závodníků ({c.get('Firstname', '')} {c.get('Lastname', '')}).")
 
     result = [
         c.get("Rank", ""),
@@ -102,7 +116,7 @@ def process_heatresult(f):
         with open(filename, "w", newline="") as out_file:
             writer = csv.writer(out_file, delimiter="\t")
             for competitor in results:
-                writer.writerow(process_competitor(competitor))
+                writer.writerow(process_competitor(competitor, f))
 
         if GENERATE_CSV:
             filename = f.parent / (heat_number + ".csv")
